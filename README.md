@@ -1,5 +1,3 @@
-/
-
 Input : Contract , AppName , TotalDuration
 
 Output : Contract , TVDuration , MovieDuration , ChildDuration , RelaxDuration , SportDuration
