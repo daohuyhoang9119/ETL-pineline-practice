@@ -23,3 +23,4 @@ There are 2 ways to do it:
 
 Direction 1: Read data of 30 files, then calculate
 Direction 2: Read and process each file, then combine all results and group by sum
+![alt text](img/etl-flow.png)
