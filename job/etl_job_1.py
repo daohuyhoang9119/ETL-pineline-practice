@@ -43,7 +43,7 @@ def pivot_data(df):
     return data 
 
 input_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\data\\20220401.json"
-out_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\log1"
+output_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\day-1"
 
 def main(path):
     print("---------Reading data from source--------------")
@@ -59,8 +59,9 @@ def main(path):
     print("---------Printing output--------------")
     df.show(5,truncate=False)
     print("---------Saving output--------------")
-    df.repartition(1).write.csv('D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\log1-test').header("true")
-    # df.repartition(1).write.option("header", "true").csv(out_path)
+    df.printSchema()
+    df.repartition(1).write.csv(output_path, header=True, mode="overwrite")
+    
     return print("Task finished") 
 
 main(input_path)
