@@ -7,17 +7,10 @@ import pyspark
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-from datetime import timedelta
- 
+from dotenv import load_dotenv, dotenv_values
 
 
 spark = SparkSession.builder.config("spark.driver.memory", "10g").getOrCreate()
-
-PSQL_SERVERNAME = "localhost"
-PSQL_PORTNUMBER = 5432
-PSQL_DBNAME = "PostgreSQL 16"
-PSQL_USERNAME = "postgres"
-PSQL_PASSWORD = "admin123"
 
 
 def read_data(path):
@@ -72,8 +65,11 @@ def save_as_csv(df, output):
     return None
 
 def save_to_DB(df):
+    # load_dotenv()
+    # os.getenv("PSQL_PORTNUMBER")
+
     print("------Start importing data to Pgadmin Database-----")
-    df = df.write.format("jdbc").option("url", "jdbc:postgresql:/localhost:5432/PostgreSQL 16").option("dbtable", 'user_log').option("user",  PSQL_USERNAME).option("password", PSQL_PASSWORD).save()
+    df.write.format("jdbc").option("url", "jdbc:postgresql://localhost:5432/ETL Bigdata").option("dbtable", 'user_log').option("user", "postgres").option("password", "admin123").save()
     print("------Done import to Database-----")
     return None
 
@@ -117,9 +113,9 @@ def main(path):
         os.makedirs(output_path)
 
     #save as csv
-    save_as_csv(final_df, output_path)
+    # save_as_csv(final_df, output_path)
 
-    # save_to_DB(final_df)
+    save_to_DB(final_df)
     return print("Task finished") 
 
 main(input_path)
