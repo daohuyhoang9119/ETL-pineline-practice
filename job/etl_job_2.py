@@ -10,7 +10,14 @@ from pyspark.sql.types import *
 from datetime import timedelta
  
 
-spark = SparkSession.builder.config("spark.driver.memory", "8g").getOrCreate()
+
+spark = SparkSession.builder.config("spark.driver.memory", "10g").getOrCreate()
+
+PSQL_SERVERNAME = "localhost"
+PSQL_PORTNUMBER = 5432
+PSQL_DBNAME = "PostgreSQL 16"
+PSQL_USERNAME = "postgres"
+PSQL_PASSWORD = "admin123"
 
 
 def read_data(path):
@@ -47,13 +54,28 @@ def pivot_data(df):
     return data 
 
 input_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\data\\"
-output_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\"
+output_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\final-data"
 
 
 def get_date(filename):
     date = filename.split(".")[0]
     date = datetime.strptime(date, "%Y%m%d").date()
     return date
+
+def save_as_csv(df, output):
+    try:
+        df.repartition(1).write.csv(output, header=True, mode="overwrite")
+        print("CSV file written successfully.")
+    except Exception as e:
+        print(f"Error writing CSV file: {e}")
+
+    return None
+
+def save_to_DB(df):
+    print("------Start importing data to Pgadmin Database-----")
+    df = df.write.format("jdbc").option("url", "jdbc:postgresql:/localhost:5432/PostgreSQL 16").option("dbtable", 'user_log').option("user",  PSQL_USERNAME).option("password", PSQL_PASSWORD).save()
+    print("------Done import to Database-----")
+    return None
 
 
 def main(path):
@@ -87,8 +109,17 @@ def main(path):
                 final_df = final_df.unionByName(df)
 
     final_df.show(5,truncate=False)
+    print("--------- Pivot the data--------------")
     final_df = pivot_data(final_df)
     final_df.show(5,truncate=False)
+     # Check if output path exists
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    #save as csv
+    save_as_csv(final_df, output_path)
+
+    # save_to_DB(final_df)
     return print("Task finished") 
 
 main(input_path)
