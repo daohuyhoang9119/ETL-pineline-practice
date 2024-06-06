@@ -29,3 +29,4 @@ Direction 2: Read and process each file, then combine all results and group by s
 ![Data after transforming: clean null, add date, total duration ](img/data-transform.png)
 
 ![Add](img/most_watch.png)
+![alt text](image/taste.png)
