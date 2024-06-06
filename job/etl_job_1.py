@@ -8,7 +8,6 @@ from pyspark.sql.functions import *
 
 spark = SparkSession.builder.config("spark.driver.memory", "8g").getOrCreate()
 
-
 def read_data(path):
     try:
         df = spark.read.json(path)

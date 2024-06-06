@@ -9,9 +9,10 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from dotenv import load_dotenv, dotenv_values
 
+input_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\data\\"
+output_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\final-data"
 
 spark = SparkSession.builder.config("spark.driver.memory", "10g").getOrCreate()
-
 
 def read_data(path):
     try:
@@ -20,7 +21,6 @@ def read_data(path):
     except Exception as e:
         print(f"Error reading data from {path}")
         return None
-
 
 
 def transform_data(df):
@@ -46,8 +46,6 @@ def pivot_data(df):
     data = data.fillna(0)
     return data 
 
-input_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\data\\"
-output_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\final-data"
 
 
 def get_date(filename):
@@ -78,8 +76,24 @@ def create_most_watch_column(df):
     columns_to_compare = ["Giải Trí", "Phim Truyện", "Thiếu Nhi", "Thể Thao", "Truyền Hình"]
     max_col_expr = coalesce(*[when(col(c) == greatest(*columns_to_compare), lit(c)).otherwise(None) for c in columns_to_compare])
     df = df.withColumn("most_watch", max_col_expr)
-    # df2 = df.withColumn('most_watch', greatest('Giải Trí', 'Phim Truyện', 'Thiếu Nhi', 'Thể Thao', 'Truyền Hình'))
     return df
+
+def create_customer_taste(df):
+    data = df.withColumn('Customer_Taste',
+        concat_ws("-",
+            when(
+                (col('Giải Trí') != 0), "Giải Trí"),
+            when(
+                (col('Phim Truyện') != 0), "Phim Truyện"),
+            when(
+                (col('Thiếu Nhi') != 0),"CT Thiếu Nhi"),
+            when(
+                (col('Thể Thao') != 0),"Thể Thao"),
+            when(
+                (col('Truyền Hình') != 0),"Truyền Hình")
+            )
+        )
+    return data
 
 
 
@@ -132,7 +146,8 @@ def main(path):
     test1 = create_most_watch_column(final_df)
     test1.show(5,truncate=False)
     
-    
+    test2 = create_customer_taste(test1)
+    test2.show(5,truncate=False)
     
     return print("Task finished") 
 
