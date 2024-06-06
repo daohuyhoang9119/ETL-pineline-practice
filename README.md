@@ -23,4 +23,9 @@ There are 2 ways to do it:
 
 Direction 1: Read data of 30 files, then calculate
 Direction 2: Read and process each file, then combine all results and group by sum
-![alt text](img/etl-flow.png)
+
+![ETL FLOW](img/etl-flow.png)
+![alt text](img/root-data.png)
+![Data after transforming: clean null, add date, total duration ](img/data-transform.png)
+
+![Add](img/most_watch.png)
