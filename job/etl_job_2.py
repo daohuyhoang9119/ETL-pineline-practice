@@ -74,6 +74,15 @@ def save_to_DB(df):
     return None
 
 
+def create_most_watch_column(df):
+    columns_to_compare = ["Giải Trí", "Phim Truyện", "Thiếu Nhi", "Thể Thao", "Truyền Hình"]
+    max_col_expr = coalesce(*[when(col(c) == greatest(*columns_to_compare), lit(c)).otherwise(None) for c in columns_to_compare])
+    df = df.withColumn("most_watch", max_col_expr)
+    # df2 = df.withColumn('most_watch', greatest('Giải Trí', 'Phim Truyện', 'Thiếu Nhi', 'Thể Thao', 'Truyền Hình'))
+    return df
+
+
+
 def main(path):
     print("---------Reading files from folder--------------")
     files = os.listdir(path)
@@ -108,6 +117,7 @@ def main(path):
     print("--------- Pivot the data--------------")
     final_df = pivot_data(final_df)
     final_df.show(5,truncate=False)
+
      # Check if output path exists
     if not os.path.exists(output_path):
         os.makedirs(output_path)
@@ -115,7 +125,15 @@ def main(path):
     #save as csv
     # save_as_csv(final_df, output_path)
 
-    save_to_DB(final_df)
+    #save to Postgres
+    # save_to_DB(final_df)
+
+
+    test1 = create_most_watch_column(final_df)
+    test1.show(5,truncate=False)
+    
+    
+    
     return print("Task finished") 
 
 main(input_path)
