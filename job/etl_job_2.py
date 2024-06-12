@@ -7,6 +7,8 @@ import pyspark
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+from pyspark.sql.window import Window
+import pyspark.sql.functions as sf
 from dotenv import load_dotenv, dotenv_values
 
 input_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\data\\"
@@ -62,13 +64,25 @@ def save_as_csv(df, output):
 
     return None
 
+
 def save_to_DB(df):
-    # load_dotenv()
-    # os.getenv("PSQL_PORTNUMBER")
+    load_dotenv()
+    port_number = os.getenv("PSQL_PORTNUMBER")
+    db_name = os.getenv("PSQL_DBNAME")
+    username = os.getenv("PSQL_USERNAME")
+    password = os.getenv("PSQL_PASSWORD")
+    if not all([port_number, db_name, username, password]):
+        print("Missing one or more environment variables for database connection.")
+        return None
 
     print("------Start importing data to Pgadmin Database-----")
-    df.write.format("jdbc").option("url", "jdbc:postgresql://localhost:5432/ETL Bigdata").option("dbtable", 'user_log').option("user", "postgres").option("password", "admin123").save()
+    
+    jdbc_url = f"jdbc:postgresql://localhost:{port_number}/{db_name}"
+
+    df.write.format("jdbc").option("url", jdbc_url).option("dbtable", 'user_log').option("user", username).option("password", password).save()
+
     print("------Done import to Database-----")
+
     return None
 
 
@@ -94,6 +108,22 @@ def create_customer_taste(df):
             )
         )
     return data
+
+def find_active_user(df):
+    windowspec = Window.partitionBy("Contract")
+    df = df.withColumn("Active", sf.count("Date").over(windowspec))
+    df = df.drop("Date")
+    df = df.groupBy("Contract").agg(
+        sf.sum("Giải Trí").alias("Total_Giai_Tri"),
+        sf.sum("Phim Truyện").alias("Total_Phim_Truyen"),
+        sf.sum("Thể Thao").alias("Total_The_Thao"),
+        sf.sum("Thiếu Nhi").alias("Total_Thieu_Nhi"),
+        sf.sum("Truyền Hình").alias("Total_Truyen_Hinh"),
+        sf.first("most_watch").alias("MostWacth"),
+        sf.first("Customer_Taste").alias("Taste"),
+        sf.first("Active").alias("Active_Day")
+    )
+    return df
 
 
 
@@ -143,13 +173,17 @@ def main(path):
     # save_to_DB(final_df)
 
 
+    print("--------- Find most watch of 1 user--------------")
     test1 = create_most_watch_column(final_df)
     test1.show(5,truncate=False)
     
+    print("--------- Find user taste--------------")
     test2 = create_customer_taste(test1)
     test2.show(5,truncate=False)
-    
-    return print("Task finished") 
+    print("--------- How many user active per day/month--------------")
+    test2 = find_active_user(test2)
+    test2.show(5,truncate=False)
+    return print("--------Task finished-----") 
 
 main(input_path)
 
