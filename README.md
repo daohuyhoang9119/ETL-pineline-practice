@@ -30,3 +30,4 @@ Direction 2: Read and process each file, then combine all results and group by s
 
 ![Add](img/most_watch.png)
 ![alt text](img/taste.png)
+![alt text](img/active_user.png)
