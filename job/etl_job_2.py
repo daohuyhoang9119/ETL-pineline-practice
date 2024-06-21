@@ -114,12 +114,12 @@ def find_active_user(df):
     df = df.withColumn("Active", sf.count("Date").over(windowspec))
     df = df.drop("Date")
     df = df.groupBy("Contract").agg(
-        sf.sum("Giải Trí").alias("Total_Giai_Tri"),
-        sf.sum("Phim Truyện").alias("Total_Phim_Truyen"),
-        sf.sum("Thể Thao").alias("Total_The_Thao"),
-        sf.sum("Thiếu Nhi").alias("Total_Thieu_Nhi"),
-        sf.sum("Truyền Hình").alias("Total_Truyen_Hinh"),
-        sf.first("MostWatch").alias("MostWacth"),
+        sf.sum("Giải Trí").alias("Total_Giải_Trí"),
+        sf.sum("Phim Truyện").alias("Total_Phim_Truyện"),
+        sf.sum("Thể Thao").alias("Total_Thể_Thao"),
+        sf.sum("Thiếu Nhi").alias("Total_Thiếu_Nhi"),
+        sf.sum("Truyền Hình").alias("Total_Truyền_Hình"),
+        sf.first("MostWatch").alias("MostWatch"),
         sf.first("Taste").alias("Taste"),
         sf.first("Active").alias("Active_Day")
     )
@@ -169,8 +169,7 @@ def main(path):
     #save as csv
     # save_as_csv(final_df, output_path)
 
-    #save to Postgres
-    # save_to_DB(final_df)
+   
 
 
     print("--------- Find most watch of 1 user--------------")
@@ -183,6 +182,9 @@ def main(path):
     print("--------- How many user active per day/month--------------")
     test2 = find_active_user(test2)
     test2.show(5,truncate=False)
+    
+    #save to Postgres
+    save_to_DB(test2)
     return print("--------Task finished-----") 
 
 main(input_path)

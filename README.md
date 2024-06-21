@@ -7,6 +7,8 @@
 - [Processing Steps](#processing-steps)
 - [Data Processing Strategies](#data-processing-strategies)
 - [Architecture Overview](#architecture-overview)
+- [Usage](#usage)
+- [Contact](#contact)
 
 ## Introduction
 
@@ -19,17 +21,20 @@ The User Engagement Data Pipeline is designed to process user engagement data fr
   - `_index`
   - `_score`
   - `_source`
-  - `_Type`
+  - `_type`
 
 ![alt text](img/root-data.png)
 
 - **Output**: CSV files or database tables containing the following fields:
   - `Contract`
-  - `TVDuration`
-  - `MovieDuration`
-  - `ChildDuration`
-  - `RelaxDuration`
-  - `SportDuration`
+  - `Total_Giải_Trí`
+  - `Total_Phim_Truyện`
+  - `Total_Thiếu_Nhi`
+  - `Total_Thể_Thao`
+  - `Total_Truyền_Hình`
+  - `MostWatch`
+  - `Taste`
+  - `Active_Day`
 
 ![Add](img/most_watch.png)
 ![Data after transforming: clean null, add date, total duration ](img/data-transform.png)
@@ -81,3 +86,27 @@ For efficiency and scalability, Direction 2 is preferred as it allows incrementa
 ### Active User
 
 ![Active User](img/active_user.png)
+
+## Usage
+
+To use the User Engagement Data Pipeline, follow these steps:
+
+### Installation
+
+Clone the repository:
+
+```sh
+git clone
+cd user-engagement-data-pipeline
+```
+
+Install the required Python packages:
+
+```sh
+pip install -r requirements.txt
+```
+
+### Contact
+
+For any inquiries or support, please contact:
+Email: daohuyhoang9119@gmail.com
