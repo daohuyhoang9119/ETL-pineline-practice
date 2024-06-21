@@ -89,11 +89,11 @@ def save_to_DB(df):
 def create_most_watch_column(df):
     columns_to_compare = ["Giải Trí", "Phim Truyện", "Thiếu Nhi", "Thể Thao", "Truyền Hình"]
     max_col_expr = coalesce(*[when(col(c) == greatest(*columns_to_compare), lit(c)).otherwise(None) for c in columns_to_compare])
-    df = df.withColumn("most_watch", max_col_expr)
+    df = df.withColumn("MostWatch", max_col_expr)
     return df
 
 def create_customer_taste(df):
-    data = df.withColumn('Customer_Taste',
+    data = df.withColumn('Taste',
         concat_ws("-",
             when(
                 (col('Giải Trí') != 0), "Giải Trí"),
@@ -119,8 +119,8 @@ def find_active_user(df):
         sf.sum("Thể Thao").alias("Total_The_Thao"),
         sf.sum("Thiếu Nhi").alias("Total_Thieu_Nhi"),
         sf.sum("Truyền Hình").alias("Total_Truyen_Hinh"),
-        sf.first("most_watch").alias("MostWacth"),
-        sf.first("Customer_Taste").alias("Taste"),
+        sf.first("MostWatch").alias("MostWacth"),
+        sf.first("Taste").alias("Taste"),
         sf.first("Active").alias("Active_Day")
     )
     return df
