@@ -11,8 +11,9 @@ from pyspark.sql.window import Window
 import pyspark.sql.functions as sf
 from dotenv import load_dotenv, dotenv_values
 
-input_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\data\\"
-output_path = "D:\\Đại Học CNTT\\Data engineer\\DE-COURSE\\Homework\\ETL Pineline\\output\\final-data"
+load_dotenv()
+input_path = os.getenv("INPUT_PATH")
+output_path = os.getenv("OUTPUT_PATH")
 
 spark = SparkSession.builder.config("spark.driver.memory", "10g").getOrCreate()
 
@@ -166,25 +167,24 @@ def main(path):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    #save as csv
-    # save_as_csv(final_df, output_path)
-
-   
-
 
     print("--------- Find most watch of 1 user--------------")
-    test1 = create_most_watch_column(final_df)
-    test1.show(5,truncate=False)
+    final_df = create_most_watch_column(final_df)
+    final_df.show(5,truncate=False)
     
     print("--------- Find user taste--------------")
-    test2 = create_customer_taste(test1)
-    test2.show(5,truncate=False)
+    final_df = create_customer_taste(final_df)
+    final_df.show(5,truncate=False)
     print("--------- How many user active per day/month--------------")
-    test2 = find_active_user(test2)
-    test2.show(5,truncate=False)
+    final_df = find_active_user(final_df)
+    final_df.show(5,truncate=False)
     
-    #save to Postgres
-    save_to_DB(test2)
+    # #save to Postgres
+    # save_to_DB(final_df)
+
+    #save as csv
+    save_as_csv(final_df, output_path)
+
     return print("--------Task finished-----") 
 
 main(input_path)
